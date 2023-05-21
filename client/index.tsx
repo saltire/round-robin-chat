@@ -5,4 +5,4 @@ import App from './App';
 
 
 createRoot(document.querySelector('#root')!)
-  .render(<App headerText='React-Node-TypeScript Boilerplate App' />);
+  .render(<App />);

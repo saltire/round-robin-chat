@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { json, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 
 import routes from './routes';
-import { run } from './lib/chat';
 
 
 const app = express();
+app.use(json());
 app.use(morgan('dev'));
 
 app.use('/', routes);
@@ -18,7 +18,3 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log('Listening on port', port));
-
-// Run a round, as a test.
-run(1)
-  .catch(err => console.error(err.message));
