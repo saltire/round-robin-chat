@@ -45,6 +45,10 @@ export const getResponse = async (entity: Entity, responses: Response[]) => {
         role: 'user',
         content: `${response.name} says:\n\n${response.content}`,
       })),
+    ...entity.reminder ? [{
+      role: 'system',
+      content: entity.reminder,
+    } as ChatCompletionRequestMessage] : [],
   ]);
 
   if (responseText) {

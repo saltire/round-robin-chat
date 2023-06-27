@@ -1,5 +1,5 @@
 {
-  "name": "round-robin",
+  "name": "round-robin-chat",
   "private": true,
   "engines": {
     "node": "18"
@@ -35,6 +35,8 @@
     "react-dom": "^18.2.0",
     "react-refresh": "^0.14.0",
     "sass-loader": "^13.2.2",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1",
     "terser-webpack-plugin": "^5.3.9",
     "uuid": "^9.0.0",
     "webpack": "^5.83.1",

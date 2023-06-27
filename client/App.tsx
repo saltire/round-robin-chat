@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
 
 import './App.scss';
@@ -18,36 +19,36 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [responses, setResponses] = useState<WithId<Response>[]>([]);
 
+  const socket = useRef(io());
+
   useEffect(() => {
-    fetch('/api/defaults')
-      .then(resp => resp.json())
-      .then((data: { entities: Entity[] }) => setEntities(
-        data.entities.map(entity => ({ ...entity, id: uuid() }))))
-      .catch(console.error);
-  }, []);
+    socket.current.on('defaults', (data: { entities: Entity[] }) => setEntities(
+      data.entities.map(entity => ({ ...entity, id: uuid() }))));
+  }, [socket]);
+
+  const onResponse = useCallback((response: Response) => {
+    setResponses(prev => [...prev, { ...response, id: uuid() }]);
+    if (entities) {
+      setIndex(prev => (prev + 1) % entities.length);
+    }
+    setLoading(false);
+  }, [entities]);
+
+  useEffect(() => {
+    socket.current.on('response', onResponse);
+    return () => {
+      socket.current.off('response', onResponse);
+    };
+  }, [onResponse]);
 
   const getNext = useCallback(() => {
-    setLoading(true);
-    fetch('/api/response',
-      {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          entity: entities?.[index],
-          responses,
-        }),
-      })
-      .then(resp => resp.json())
-      .then((data: { response: Response }) => {
-        setResponses(prev => [...prev, { ...data.response, id: uuid() }]);
-        if (entities) {
-          setIndex(prev => (prev + 1) % entities.length);
-        }
-        setLoading(false);
+    if (entities) {
+      setLoading(true);
+      socket.current.emit('getResponse', {
+        entity: entities[index],
+        responses,
       });
+    }
   }, [entities, index, responses]);
 
   return (
@@ -67,6 +68,10 @@ export default function App() {
               <textarea
                 value={entity.prompt}
                 onChange={e => updateEntity(entity.id, { prompt: e.target.value })}
+              />
+              <textarea
+                value={entity.reminder}
+                onChange={e => updateEntity(entity.id, { reminder: e.target.value })}
               />
             </div>
           )))}
