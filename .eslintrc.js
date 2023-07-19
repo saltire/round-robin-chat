@@ -9,10 +9,16 @@ module.exports = {
   extends: [
     'airbnb',
     'airbnb-typescript',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/stylistic',
   ],
   rules: {
     '@typescript-eslint/brace-style': [2, 'stroustrup'],
-    '@typescript-eslint/lines-between-class-members': [2, { exceptAfterSingleLine: true }],
+    '@typescript-eslint/consistent-type-definitions': [2, 'type'],
+    '@typescript-eslint/member-delimiter-style': [2, {
+      multiline: { delimiter: 'comma', requireLast: true },
+      singleline: { delimiter: 'comma', requireLast: false },
+    }],
     'arrow-parens': [2, 'as-needed'],
     'function-call-argument-newline': 0,
     'function-paren-newline': 0,
@@ -24,8 +30,6 @@ module.exports = {
     'no-nested-ternary': 0,
     'object-curly-newline': [2, { multiline: true, consistent: true }],
     radix: [2, 'as-needed'],
-    'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
-    'react/jsx-filename-extension': [2, { extensions: ['.tsx'] }],
     'react/jsx-one-expression-per-line': 0,
     'react/jsx-props-no-spreading': 0,
     'react/prop-types': 0,
