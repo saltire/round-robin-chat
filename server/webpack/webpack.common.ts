@@ -25,8 +25,8 @@ const config: Configuration = {
         use: 'babel-loader',
       },
       {
-        test: /\.s?css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(jpe?g|gif|png|svg|eot|otf|ttf|woff2?)$/,

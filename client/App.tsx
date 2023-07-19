@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
 
-import './App.scss';
 import { Entity, Response } from '../server/lib/types';
 
 
@@ -51,45 +50,84 @@ export default function App() {
     }
   }, [entities, index, responses]);
 
+  const formClass = 'w-full px-2 py-1 ring-1 ring-zinc-500 rounded-sm';
+  const inputClass = `${formClass}`;
+  const textareaClass = `${formClass} min-h-[8rem]`;
+
   return (
     <div className='App'>
-      <header>
-        <h1>Round Robin Chat</h1>
+      <header className='mb-8 py-2 bg-zinc-300 text-center'>
+        <h1 className='text-3xl font-bold'>Round Robin Chat</h1>
       </header>
-      <main>
-        <div className='entities'>
-          {!entities ? <p>Loading...</p> : (entities.map(entity => (
-            <div key={entity.id}>
-              <input
-                type='text'
-                value={entity.name}
-                onChange={e => updateEntity(entity.id, { name: e.target.value })}
-              />
-              <textarea
-                value={entity.prompt}
-                onChange={e => updateEntity(entity.id, { prompt: e.target.value })}
-              />
-              <textarea
-                value={entity.reminder}
-                onChange={e => updateEntity(entity.id, { reminder: e.target.value })}
-              />
+      <main className='max-w-screen-lg m-auto'>
+        {!entities ? <p className='my-4 italic text-center'>Loading...</p> : (
+          <div className='grid grid-cols-[2fr_3fr_3fr] grid-rows-fr'>
+            <div className='mx-4 mb-4'>
+              <strong>Name</strong><br />
+              <em>The name of the bot.</em>
             </div>
-          )))}
-        </div>
+            <div className='mx-4 mb-4'>
+              <strong>Initial prompt</strong><br />
+              <em>Given to the bot at the start of the conversation.</em>
+            </div>
+            <div className='mx-4 mb-4'>
+              <strong>Reminder prompt</strong><br />
+              <em>
+                Given to the bot after the conversation history and before asking for a reply.
+              </em>
+            </div>
 
-        <div className='responses'>
+            {entities.map(entity => (
+              <Fragment key={entity.id}>
+                <div className='mx-2 mb-4'>
+                  <input
+                    className={inputClass}
+                    type='text'
+                    value={entity.name}
+                    onChange={e => updateEntity(entity.id, { name: e.target.value })}
+                  />
+                </div>
+                <div className='mx-2 mb-4'>
+                  <textarea
+                    className={textareaClass}
+                    value={entity.prompt}
+                    onChange={e => updateEntity(entity.id, { prompt: e.target.value })}
+                  />
+                </div>
+                <div className='mx-2 mb-4'>
+                  <textarea
+                    className={textareaClass}
+                    value={entity.reminder}
+                    onChange={e => updateEntity(entity.id, { reminder: e.target.value })}
+                  />
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        )}
+
+        <div className='whitespace-pre-line'>
           {responses.map(response => (
-            <p key={response.id}>
-              <strong>{response.name}:</strong><br />
+            <p key={response.id} className='mx-2 my-6 px-3 py-2 ring-1 ring-zinc-300 rounded-sm'>
+              <strong className='block mb-3 pb-2 border-b border-zinc-300 border-dashed'>
+                {response.name}:
+              </strong>
               {response.content}
             </p>
           ))}
 
-          {loading && <p>Loading...</p>}
+          {loading && <p className='my-4 italic text-center'>Loading...</p>}
         </div>
 
-        <div className='controls'>
-          <button type='button' disabled={loading} onClick={getNext}>Next</button>
+        <div className='mb-8 text-center'>
+          <button
+            className='px-4 py-2 bg-zinc-300 rounded-sm disabled:opacity-50'
+            type='button'
+            disabled={loading}
+            onClick={getNext}
+          >
+            Next
+          </button>
         </div>
       </main>
     </div>
